@@ -94,12 +94,19 @@ if __name__ == "__main__":
     corpus = np.array(train_english + train_korean)
     print(corpus.shape)
 
+    # 단어 학습
     embedding = Embedding(corpus, False)
     
+    # 한국어 테스트
     tokenized = embedding.tokenize(train_korean[0])
     print(tokenized)
-
     embedded = [embedding.word_to_vec(token) for token in tokenized]
+    reset = [embedding.vec_to_word(emb) for emb in embedded]
+    print(reset)
 
+    # 영어 테스트
+    tokenized = embedding.tokenize(train_english[0])
+    print(tokenized)
+    embedded = [embedding.word_to_vec(token) for token in tokenized]
     reset = [embedding.vec_to_word(emb) for emb in embedded]
     print(reset)
