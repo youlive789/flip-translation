@@ -33,11 +33,6 @@ def emb(sentence, embedding):
 
 if __name__ == "__main__":
 
-    # embedding = Embedding(corpus=None, word_train=False)
-    # t = ['Much', 'of', 'personal', 'co', 'mputing', 'is', 'about', '"can', 'you', 'to', 'p', 'th', 'is?"', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>', '<PAD>']
-    # print(emb(t, embedding))
-    # quit()
-
     # 데이터 로드
     with open("data/train.en", encoding="utf-8") as f:
         train_english = f.readlines()
