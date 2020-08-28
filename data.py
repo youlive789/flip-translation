@@ -1,3 +1,4 @@
+import numpy as np
 from embedding import Embedding
 from multiprocessing import Pool
 from functools import partial
@@ -5,20 +6,30 @@ import time
 
 class Dataset:
     def __init__(self, english, korean):
-        pass
+        self.english = english
+        self.korean = korean
 
-    def get_corpus(self):
-        pass
+    def prepare_dataset(self, embedding):
+        self._tokenize_dataset(embedding)
+        self._fix_length_dataset()
+        self._embedding_dataset(embedding)
+        return np.array(self.english), np.array(self.korean)
 
-    def prepare_dataset(self):
-        pass
-
-    def _tokenize_dataset(self):
-        pass
+    def _tokenize_dataset(self, embedding):
+        with Pool(2) as pool:
+            self.english = pool.map(embedding.tokenize, self.english)
+            self.korean = pool.map(embedding.tokenize, self.korean)
 
     def _fix_length_dataset(self):
-        pass
-    
+        with Pool(2) as pool:
+            self.english = pool.map(fix, self.english)
+            self.korean = pool.map(fix, self.korean)
+
+    def _embedding_dataset(self, embedding):
+        with Pool(2) as pool:
+            self.english = pool.map(partial(embed, embedding=embedding), self.english)
+            self.korean = pool.map(partial(embed, embedding=embedding), self.korean)
+
 def fix(sentence):
     length = len(sentence)
     if length < 16:
@@ -28,7 +39,7 @@ def fix(sentence):
         sentence = sentence[:16]
     return sentence
 
-def emb(sentence, embedding):
+def embed(sentence, embedding):
     return [embedding.word_to_vec(word) for word in sentence]
 
 if __name__ == "__main__":
@@ -41,33 +52,9 @@ if __name__ == "__main__":
         train_korean = f.readlines()
     
     embedding = Embedding(corpus=None, word_train=False)
+    dataset = Dataset(train_english, train_korean)
+    train_english_embed, train_korean_embed = dataset.prepare_dataset(embedding)
+    print(train_english_embed.shape)
+    print(train_korean_embed.shape)
 
-    # 문서 토크나이즈
-    t = time.time()
-    with Pool(2) as pool:
-        train_english = pool.map(embedding.tokenize, train_english)
-        train_korean = pool.map(embedding.tokenize, train_korean)
-    print(train_english[0])
-    print(train_korean[0])
-    print(time.time() - t)
-
-    print()
-
-    # 문장 길이 FIXING - <PAD>
-    t = time.time()
-    with Pool(2) as pool:
-        train_english = pool.map(fix, train_english)
-        train_korean = pool.map(fix, train_korean)
-    print(train_english[0])
-    print(train_korean[0])
-    print(time.time() - t)
-
-    print()
     
-    t = time.time()
-    with Pool(2) as pool:
-        train_english = pool.map(partial(emb, embedding=embedding), train_english)
-        train_korean = pool.map(partial(emb, embedding=embedding), train_korean)
-    print(train_english[0])
-    print(train_korean[0])
-    print(time.time() - t)
