@@ -29,6 +29,7 @@ class Embedding:
         self.idx_word_dict[1] = '<STA>'
         self.idx_word_dict[2] = '<EOS>'
         self.idx_word_dict[3] = '<UNK>'
+        self.word_idx_dict = {v: k for k, v in self.idx_word_dict.items()}
 
     def _word_extract(self):
         self.extractor = WordExtractor()
@@ -75,7 +76,7 @@ class Embedding:
 
     def word_to_index(self, word):
         try :
-            return list(self.idx_word_dict.keys())[list(self.idx_word_dict.values()).index(word)]
+            return self.word_idx_dict[word]
         except :
             return 3
 

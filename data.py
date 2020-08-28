@@ -11,9 +11,13 @@ class Dataset:
 
     def prepare_dataset(self, embedding):
         self._tokenize_dataset(embedding)
+        print("tokenize done")
         self._fix_length_dataset()
+        print("fix len done")
         self._idx_dataset(embedding)
+        print("idx done")
         self._embedding_dataset(embedding)
+        print("embed done")
         return np.array(self.english), np.array(self.korean), np.array(self.korean_idx)
 
     def _tokenize_dataset(self, embedding):

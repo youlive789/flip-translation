@@ -20,16 +20,23 @@ if __name__ == "__main__":
     model = Seq2Seq(16, 100, len(embedding.idx_word_dict.keys()))
 
     loss_object = tf.keras.losses.SparseCategoricalCrossentropy()
-    optimizer = tf.keras.optimizer.Adam()
+    optimizer = tf.keras.optimizers.Adam()
 
     train_loss = tf.keras.metrics.Mean(name="train_loss")
     train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name="train_accuracy")
 
-    for epoch in range(EPOCHS):
-        for seqs, labels in train_ds:
-            train_step(model, encoder_input, decoder_input, decoder_output, loss_object, optimizer, train_loss, train_accuracy)
+    batch_size = 128
+    count = int(len(encoder_input) / 128)
+    for epoch in range(1):
+        for c in range(count):
+            start = c * batch_size
+            end = (c + 1) * batch_size
+            train_step(model, encoder_input[start:end], decoder_input[start:end], decoder_output[start:end], loss_object, optimizer, train_loss, train_accuracy)
 
         template='Epoch {}, Loss: {}, Accuracy:{}'
         print(template.format(epoch + 1,
                                 train_loss.result(),
                                 train_accuracy.result() * 100))
+
+    test_idx = test_step(model, encoder_input[0:1])
+    print(test_idx)
