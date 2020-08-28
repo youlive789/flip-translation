@@ -25,8 +25,8 @@ if __name__ == "__main__":
     train_loss = tf.keras.metrics.Mean(name="train_loss")
     train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name="train_accuracy")
 
-    batch_size = 64
-    count = int(len(encoder_input) / 64)
+    batch_size = 32
+    count = int(len(encoder_input) / 32)
     for epoch in range(3):
         for c in range(count):
             start = c * batch_size
