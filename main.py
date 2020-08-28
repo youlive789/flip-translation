@@ -16,30 +16,28 @@ if __name__ == "__main__":
     embedding = Embedding(corpus=None, word_train=False)
     dataset = Dataset(train_english, train_korean)
     encoder_input, decoder_input, decoder_output = dataset.prepare_dataset(embedding)
-    print("데이터 로딩완료")
 
     model = Seq2Seq(16, 100, len(embedding.idx_word_dict.keys()))
-    print("모델 정의 완료")
 
     loss_object = tf.keras.losses.SparseCategoricalCrossentropy()
     optimizer = tf.keras.optimizers.Adam()
 
     train_loss = tf.keras.metrics.Mean(name="train_loss")
     train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name="train_accuracy")
-    print("필요 객체 정의 완료")
 
-    batch_size = 32
-    count = int(len(encoder_input) / 32)
-    for epoch in range(1):
+    batch_size = 64
+    count = int(len(encoder_input) / 64)
+    for epoch in range(3):
         for c in range(count):
             start = c * batch_size
             end = (c + 1) * batch_size
             train_step(model, encoder_input[start:end], decoder_input[start:end], decoder_output[start:end], loss_object, optimizer, train_loss, train_accuracy)
 
-        template='Epoch {}, Loss: {}, Accuracy:{}'
-        print(template.format(epoch + 1,
-                                train_loss.result(),
-                                train_accuracy.result() * 100))
+            template='Epoch {}, Loss: {}, Accuracy:{}'
+            print(template.format(epoch + 1,
+                                    train_loss.result(),
+                                    train_accuracy.result() * 100))
 
     test_idx = test_step(model, encoder_input[0:1])
-    print(test_idx)
+    result = [embedding.idx_to_word(idx) for idx in test_idx]
+    print(result)
