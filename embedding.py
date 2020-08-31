@@ -13,12 +13,15 @@ class Embedding:
     MODEL_SAVED_DIR = "saved_model/fasttext.model"
     TOKENIZER_SAVED_DIR = "saved_model/tokenizer.pkl"
 
-    def __init__(self, corpus, word_train:bool):
+    def __init__(self, corpus, word_train:bool, main_dir:str = ""):
+        self.MODEL_SAVED_DIR = main_dir + self.MODEL_SAVED_DIR
+        self.TOKENIZER_SAVED_DIR = main_dir + self.TOKENIZER_SAVED_DIR
+
         if not word_train:
             self.fasttext = FastText.load(self.MODEL_SAVED_DIR)
             self._load_tokenizer()
         else:
-            self._word_extract()
+            self._word_extract(corpus)
             self._set_cohension_score()
             self._set_tokenizer()
             self._save_tokenizer()
@@ -31,7 +34,7 @@ class Embedding:
         self.idx_word_dict[3] = '<UNK>'
         self.word_idx_dict = {v: k for k, v in self.idx_word_dict.items()}
 
-    def _word_extract(self):
+    def _word_extract(self, corpus):
         self.extractor = WordExtractor()
         self.extractor.train(corpus)
         self.words = self.extractor.extract()

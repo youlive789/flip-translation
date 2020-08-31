@@ -31,6 +31,8 @@ class Decoder(tf.keras.Model):
 class Seq2Seq(tf.keras.Model):
     def __init__(self, sequence_length, embedding_size, vocab_length):
         super(Seq2Seq, self).__init__()
+        self.sequence_length = sequence_length
+        self.embedding_size = embedding_size
         self.enc = Encoder()
         self.dec = Decoder(vocab_length = vocab_length)
 
@@ -45,12 +47,12 @@ class Seq2Seq(tf.keras.Model):
             x = inputs
             h, c = self.enc(x)
 
-            y = tf.convert_to_tensor(np.zeros((1, sequence_length, embedding_size)), dtype=tf.float32)
+            y = tf.convert_to_tensor(np.zeros((1, self.sequence_length, self.embedding_size)), dtype=tf.float32)
 
             y, h, c = self.dec((y, h, c))
             y = tf.cast(tf.argmax(y, axis=-1), dtype=tf.int32)
 
-            return tf.reshape(y, (1, sequence_length))
+            return tf.reshape(y, (1, self.sequence_length))
 
 @tf.function
 def train_step(model, encoder_input, decoder_input, decoder_output, loss_object, optimizer, train_loss, train_accuracy):
