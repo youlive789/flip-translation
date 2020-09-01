@@ -68,5 +68,3 @@ if __name__ == "__main__":
     print(train_english_embed.shape)
     print(train_korean_embed.shape)
     print(train_korean_idx.shape)
-
-    
