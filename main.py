@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     if training == "train":
         batch_size = 32
-        count = int(len(encoder_input) / 32)
+        count = int(len(encoder_input) / batch_size)
         for epoch in range(3):
             for c in range(count):
                 start = c * batch_size
