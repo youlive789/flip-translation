@@ -5,6 +5,8 @@ https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/tut
 """
 
 class Dataset:
-    def __init__(self, data_dir):
+    def __init__(self, dir_source, dir_target):
         pass
 
+    def _read_files()
+        pass
