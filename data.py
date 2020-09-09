@@ -4,6 +4,7 @@ import tensorflow as tf
 
 """[reference]
 https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/tutorials/text/nmt_with_attention.ipynb?hl=ko#scrollTo=rd0jw-eC3jEh
+https://heung-bae-lee.github.io/2020/01/22/deep_learning_11/
 """
 
 class Dataset:
