@@ -22,13 +22,12 @@ class Dataset:
         return source, target
 
     def load_dataset(self):
-        en, ko = self.create_dataset()
-        input_tensor, input_tokenizer = self._tokenize(en)
-        target_tensor, target_tokenizer = self._tokenize(ko)
+        source_data, target_data = self.create_dataset()
+        input_tensor, input_tokenizer = self._tokenize(source_data)
+        target_tensor, target_tokenizer = self._tokenize(target_data)
         return input_tensor, input_tokenizer, target_tensor, target_tokenizer
 
     def _preprocess_sentence(self, sentence):
-        # 구두점처리
         sentence = re.sub(r"([?.!,])", r" \1 ", sentence)
         sentence = re.sub(r'[" "]+', " ", sentence)
         sentence = sentence.strip()
@@ -36,7 +35,7 @@ class Dataset:
         return sentence
 
     def _tokenize(self, lang):
-        lang_tokenizer = tf.keras.preprocessing.text.Tokenizer(filters='')
+        lang_tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=2000, filters='')
         lang_tokenizer.fit_on_texts(lang)
 
         tensor = lang_tokenizer.texts_to_sequences(lang)
@@ -48,21 +47,7 @@ if __name__ == "__main__":
 
     dataset = Dataset("data/train.en", "data/train.ko")
     en, ko = dataset.create_dataset()
-    print(ko[0])
-
     en_tensor, en_tokenizer, ko_tensor, ko_tokenizer = dataset.load_dataset()
-    print(en_tensor[0])
-
-    BUFFER_SIZE = len(en_tensor)
-    BATCH_SIZE = 64
-    steps_per_epoch = len(en_tensor) // BATCH_SIZE
-    embedding_dim = 256
-    units = 1024
-    vocab_en_size = len(en_tokenizer.word_index) + 1
-    vocab_ko_size = len(ko_tokenizer.word_index) + 1
-
-    train_dataset = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(BUFFER_SIZE)
-    train_dataset = train_dataset.batch(BATCH_SIZE, drop_remainder=True)
-
-    example_input_batch, example_target_batch = next(iter(train_dataset))
-    print(example_input_batch.shape, example_target_batch.shape)
+    print(en_tensor[-1], len(en_tensor[-1]))
+    print(en_tokenizer.sequences_to_texts(en_tensor[-1:]))
+    print()
