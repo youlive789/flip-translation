@@ -54,7 +54,7 @@ class Decoder(tf.keras.Model):
     return self.dense(y), h, c
 
 class Seq2seq(tf.keras.Model):
-  def __init__(self, source_words_count, target_words_count, sos, eos):
+  def __init__(self, source_words_count, target_words_count, sos, eos, training=True):
     super(Seq2seq, self).__init__()
     self.enc = Encoder(source_words_count)
     self.dec = Decoder(target_words_count)

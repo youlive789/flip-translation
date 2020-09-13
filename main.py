@@ -1,9 +1,11 @@
+import numpy as np
 import tensorflow as tf
 from data import Dataset
 from model import Encoder, Decoder, Seq2seq, train_step, test_step
 
 if __name__ == "__main__":
     dataset = Dataset("data/train.en", "data/train.ko")
+    en, ko = dataset.create_dataset()
     en_tensor, en_tokenizer, ko_tensor, ko_tokenizer = dataset.load_dataset()
     en_words_count = len(en_tokenizer.word_index)
     ko_words_count = len(ko_tokenizer.word_index)
@@ -22,6 +24,12 @@ if __name__ == "__main__":
     for epoch in range(1):
         for seqs, labels in train_ds:
             train_step(model, seqs, labels, loss_object, optimizer, train_loss, train_accuracy)
-
             template='Epoch {}, Loss: {}, Accuracy:{}'
-            print(template.format(epoch + 1, train_loss.result(), train_accuracy.result() * 100))
+            print(template.format(epoch, train_loss.result(), train_accuracy.result() * 100))
+
+    print()
+    print(en[0])
+    test = en_tokenizer.texts_to_sequences(en[0:1])
+    pred = test_step(model,np.array(test))
+    print(pred)
+    print(ko_tokenizer.sequences_to_texts(pred.numpy()))
