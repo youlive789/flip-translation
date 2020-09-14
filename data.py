@@ -21,10 +21,10 @@ class Dataset:
 
         return source, target
 
-    def load_dataset(self):
+    def load_dataset(self, num_words):
         source_data, target_data = self.create_dataset()
-        input_tensor, input_tokenizer = self._tokenize(source_data)
-        target_tensor, target_tokenizer = self._tokenize(target_data)
+        input_tensor, input_tokenizer = self._tokenize(source_data, num_words)
+        target_tensor, target_tokenizer = self._tokenize(target_data, num_words)
         return input_tensor, input_tokenizer, target_tensor, target_tokenizer
 
     def _preprocess_sentence(self, sentence):
@@ -34,8 +34,8 @@ class Dataset:
         sentence = "<start> " + sentence + " <end>"
         return sentence
 
-    def _tokenize(self, lang):
-        lang_tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=2000, filters='')
+    def _tokenize(self, lang, num_words):
+        lang_tokenizer = tf.keras.preprocessing.text.Tokenizer(num_words=num_words, filters='')
         lang_tokenizer.fit_on_texts(lang)
 
         tensor = lang_tokenizer.texts_to_sequences(lang)

@@ -1,17 +1,22 @@
+import argparse
 import numpy as np
 import tensorflow as tf
 from data import Dataset
 from model import Encoder, Decoder, Seq2seq, train_step, test_step
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.parse_args()
+    exit()
+
+
     dataset = Dataset("data/train.en", "data/train.ko")
     en, ko = dataset.create_dataset()
-    en_tensor, en_tokenizer, ko_tensor, ko_tokenizer = dataset.load_dataset()
+    en_tensor, en_tokenizer, ko_tensor, ko_tokenizer = dataset.load_dataset(num_words)
     en_words_count = len(en_tokenizer.word_index)
     ko_words_count = len(ko_tokenizer.word_index)
-    print(en_words_count, ko_words_count)
 
-    train_ds = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(10000).batch(2)
+    train_ds = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(10000).batch(32)
     model = Seq2seq(source_words_count=en_words_count, target_words_count=ko_words_count,
         sos=ko_tokenizer.word_index["<start>"], eos=ko_tokenizer.word_index["<end>"])
 
