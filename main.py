@@ -26,7 +26,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.config) as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
+        config = yaml.load(f)
         if args.train:
             config = config["train"]
         else:
