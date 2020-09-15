@@ -35,8 +35,8 @@ if __name__ == "__main__":
         dataset = Dataset(config["source_data_path"], config["target_data_path"])
         en, ko = dataset.create_dataset()
         en_tensor, en_tokenizer, ko_tensor, ko_tokenizer = dataset.load_dataset(config["num_words"])
-        en_words_count = len(en_tokenizer.word_index)
-        ko_words_count = len(ko_tokenizer.word_index)
+        en_words_count = len(en_tokenizer.word_index) + 1
+        ko_words_count = len(ko_tokenizer.word_index) + 1
 
         train_ds = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(10000).batch(config["batch_size"])
         model = Seq2seq(source_words_count=en_words_count, target_words_count=ko_words_count,
