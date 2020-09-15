@@ -1,4 +1,5 @@
 import yaml
+import pickle
 import argparse
 import numpy as np
 import tensorflow as tf
@@ -54,11 +55,20 @@ if __name__ == "__main__":
                 template='Epoch {}, Loss: {}, Accuracy:{}'
                 print(template.format(epoch, train_loss.result(), train_accuracy.result() * 100))
 
-        print()
-        print(en[0])
         test = en_tokenizer.texts_to_sequences(en[0:1])
-        pred = test_step(model,np.array(test))
+        pred = test_step(model, np.array(test))
+
+        print(en[0])
         print(pred)
         print(ko_tokenizer.sequences_to_texts(pred.numpy()))
+
+        with open(config["save_model_path"] + "source_tokenizer.pkl", "wb") as handle:
+            pickle.dump(en_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        with open(config["save_model_path"] + "target_tokenizer.pkl", "wb") as handle:
+            pickle.dump(ko_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        model.save_weights(config["save_model_path"])
+
     else:
         pass
