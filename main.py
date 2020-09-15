@@ -49,11 +49,14 @@ if __name__ == "__main__":
         train_loss = tf.keras.metrics.Mean(name='train_loss')
         train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy')
 
+        idx = 0
         for epoch in range(config["epochs"]):
             for seqs, labels in train_ds:
                 train_step(model, seqs, labels, loss_object, optimizer, train_loss, train_accuracy)
-                template='Epoch {}, Loss: {}, Accuracy:{}'
-                print(template.format(epoch, train_loss.result(), train_accuracy.result() * 100))
+                if idx % 100 == 0:
+                    template='Epoch {}, Loss: {}, Accuracy:{}'
+                    print(template.format(epoch, train_loss.result(), train_accuracy.result() * 100))
+                idx += 1
 
         test = en_tokenizer.texts_to_sequences(en[0:1])
         pred = test_step(model, np.array(test))

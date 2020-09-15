@@ -10,7 +10,7 @@ class Encoder(tf.keras.Model):
     # default는 False이므로 주의하자!
     # return_sequence=True로하는 이유는 Attention mechanism을 사용할 때 우리가 key와 value는
     # Encoder에서 나오는 Hidden state 부분을 사용했어야 했다. 그러므로 모든 Hidden State를 사용하기 위해 바꿔준다.
-    self.lstm = tf.keras.layers.LSTM(128, return_sequences=True, return_state=True)
+    self.lstm = tf.keras.layers.LSTM(256, return_sequences=True, return_state=True)
 
   def call(self, x, training=False, mask=None):
     x = self.emb(x)
@@ -23,7 +23,7 @@ class Decoder(tf.keras.Model):
     self.emb = tf.keras.layers.Embedding(target_words_count, 64)
     # return_sequence는 return 할 Output을 full sequence 또는 Sequence의 마지막에서 출력할지를 결정하는 옵션
     # False는 마지막에만 출력, True는 모든 곳에서의 출력
-    self.lstm = tf.keras.layers.LSTM(128, return_sequences=True, return_state=True)
+    self.lstm = tf.keras.layers.LSTM(256, return_sequences=True, return_state=True)
     # LSTM 출력에다가 Attention value를 dense에 넘겨주는 것이 Attention mechanism이므로
     self.att = tf.keras.layers.Attention()
     self.dense = tf.keras.layers.Dense(target_words_count, activation='softmax')
