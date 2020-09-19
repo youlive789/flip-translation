@@ -26,7 +26,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.config) as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
+        config = yaml.load(f)
         if args.train:
             config = config["train"]
         else:
@@ -36,8 +36,8 @@ if __name__ == "__main__":
         dataset = Dataset(config["source_data_path"], config["target_data_path"])
         en, ko = dataset.create_dataset()
         en_tensor, en_tokenizer, ko_tensor, ko_tokenizer = dataset.load_dataset(config["num_words"])
-        en_words_count = len(en_tokenizer.word_index)
-        ko_words_count = len(ko_tokenizer.word_index)
+        en_words_count = len(en_tokenizer.word_index) + 1
+        ko_words_count = len(ko_tokenizer.word_index) + 1
 
         train_ds = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(10000).batch(config["batch_size"])
         model = Seq2seq(source_words_count=en_words_count, target_words_count=ko_words_count,
@@ -49,11 +49,14 @@ if __name__ == "__main__":
         train_loss = tf.keras.metrics.Mean(name='train_loss')
         train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy')
 
+        idx = 0
         for epoch in range(config["epochs"]):
             for seqs, labels in train_ds:
                 train_step(model, seqs, labels, loss_object, optimizer, train_loss, train_accuracy)
-                template='Epoch {}, Loss: {}, Accuracy:{}'
-                print(template.format(epoch, train_loss.result(), train_accuracy.result() * 100))
+                if idx % 100 == 0:
+                    template='Epoch {}, Loss: {}, Accuracy:{}'
+                    print(template.format(epoch, train_loss.result(), train_accuracy.result() * 100))
+                idx += 1
 
         test = en_tokenizer.texts_to_sequences(en[0:1])
         pred = test_step(model, np.array(test))
