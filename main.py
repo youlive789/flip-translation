@@ -39,7 +39,7 @@ if __name__ == "__main__":
         en_words_count = len(en_tokenizer.word_index) + 1
         ko_words_count = len(ko_tokenizer.word_index) + 1
 
-        train_ds = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(10000).batch(config["batch_size"])
+        train_ds = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(10000).batch(config["batch_size"]).prefetch(1024)
         model = Seq2seq(source_words_count=en_words_count, target_words_count=ko_words_count,
             sos=ko_tokenizer.word_index["<start>"], eos=ko_tokenizer.word_index["<end>"])
 
