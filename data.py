@@ -46,8 +46,8 @@ class Dataset:
 if __name__ == "__main__":
 
     dataset = Dataset("data/train.en", "data/train.ko")
-    en, ko = dataset.create_dataset()
-    en_tensor, en_tokenizer, ko_tensor, ko_tokenizer = dataset.load_dataset()
+    en_tensor, en_tokenizer, ko_tensor, ko_tokenizer = dataset.load_dataset(3200)
     print(en_tensor[-1], len(en_tensor[-1]))
+    print(en_tensor[0], len(en_tensor[0]))
     print(en_tokenizer.sequences_to_texts(en_tensor[-1:]))
     print()
