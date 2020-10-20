@@ -179,7 +179,7 @@ class FastGRNNCell(RNNCell):
 class Encoder(tf.keras.Model):
   def __init__(self, source_words_count):
     super(Encoder, self).__init__()
-    self.emb = tf.keras.layers.Embedding(source_words_count, 64)
+    self.emb = tf.keras.layers.Embedding(source_words_count, 64, input_length=4)
     self.fast_grnn = tf.keras.layers.RNN(FastGRNNCell(256, reuse=tf.compat.v1.AUTO_REUSE), return_sequences=True, return_state=True)
 
   def call(self, x, training=False, mask=None):
@@ -190,7 +190,7 @@ class Encoder(tf.keras.Model):
 class Decoder(tf.keras.Model):
   def __init__(self, target_words_count):
     super(Decoder, self).__init__()
-    self.emb = tf.keras.layers.Embedding(target_words_count, 64)
+    self.emb = tf.keras.layers.Embedding(target_words_count, 64, input_length=4)
     self.fast_grnn = tf.keras.layers.RNN(FastGRNNCell(256, reuse=tf.compat.v1.AUTO_REUSE), return_sequences=True, return_state=True)
     self.att = tf.keras.layers.Attention()
     self.dense = tf.keras.layers.Dense(target_words_count, activation='softmax')
