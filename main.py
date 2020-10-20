@@ -20,6 +20,7 @@ test:
 """
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
     parser.add_argument("train", help="training", type=bool)
     parser.add_argument("config", help="config file path", type=str)
