@@ -50,17 +50,16 @@ if __name__ == "__main__":
         optimizer = tf.keras.optimizers.Adam()
 
         train_loss = tf.keras.metrics.Mean(name='train_loss')
-        train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy')
 
         print(" === 모델정의 완료 === ")
 
         idx = 0
         for epoch in range(config["epochs"]):
             for seqs, labels in train_ds:
-                train_step(model, seqs, labels, loss_object, optimizer, train_loss, train_accuracy)
+                train_step(model, seqs, labels, loss_object, optimizer, train_loss)
                 if idx % 100 == 0:
                     template='Epoch {}, Loss: {}, Accuracy:{}'
-                    print(template.format(epoch, train_loss.result(), train_accuracy.result() * 100))
+                    print(template.format(epoch, train_loss.result()))
                 idx += 1
 
         test = en_tokenizer.texts_to_sequences(en[0:1])

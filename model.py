@@ -242,7 +242,7 @@ class Seq2seq(tf.keras.Model):
       return tf.reshape(seq.stack(), (1, 32))
 
 @tf.function
-def train_step(model, inputs, labels, loss_object, optimizer, train_loss, train_accuracy):
+def train_step(model, inputs, labels, loss_object, optimizer, train_loss):
   output_labels = labels[:, 1:]
   shifted_labels = labels[:, :-1]
   with tf.GradientTape() as tape:
@@ -252,7 +252,6 @@ def train_step(model, inputs, labels, loss_object, optimizer, train_loss, train_
 
   optimizer.apply_gradients(zip(gradients, model.trainable_variables))
   train_loss(loss)
-  train_accuracy(output_labels, predictions)
 
 @tf.function
 def test_step(model, inputs):
