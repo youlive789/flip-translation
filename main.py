@@ -39,7 +39,10 @@ if __name__ == "__main__":
         en_words_count = len(en_tokenizer.word_index) + 1
         ko_words_count = len(ko_tokenizer.word_index) + 1
 
-        train_ds = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(10000).batch(config["batch_size"]).prefetch(1024)
+        train_ds = tf.data.Dataset.from_tensor_slices((en_tensor, ko_tensor)).shuffle(10000).batch(config["batch_size"])
+
+        print(" === 데이터셋 준비완료 === ")
+
         model = Seq2seq(source_words_count=en_words_count, target_words_count=ko_words_count,
             sos=ko_tokenizer.word_index["<start>"], eos=ko_tokenizer.word_index["<end>"])
 
@@ -48,6 +51,8 @@ if __name__ == "__main__":
 
         train_loss = tf.keras.metrics.Mean(name='train_loss')
         train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy')
+
+        print(" === 모델정의 완료 === ")
 
         idx = 0
         for epoch in range(config["epochs"]):
