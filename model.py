@@ -180,7 +180,7 @@ class Encoder(tf.keras.Model):
   def __init__(self, source_words_count):
     super(Encoder, self).__init__()
     self.emb = tf.keras.layers.Embedding(source_words_count, 64, input_length=4)
-    self.fast_grnn = tf.keras.layers.RNN(FastGRNNCell(256, reuse=tf.compat.v1.AUTO_REUSE), return_sequences=True, return_state=True)
+    self.fast_grnn = tf.keras.layers.RNN(FastGRNNCell(128, reuse=tf.compat.v1.AUTO_REUSE), return_sequences=True, return_state=True)
 
   def call(self, x, training=False, mask=None):
     x = self.emb(x)
@@ -191,7 +191,7 @@ class Decoder(tf.keras.Model):
   def __init__(self, target_words_count):
     super(Decoder, self).__init__()
     self.emb = tf.keras.layers.Embedding(target_words_count, 64, input_length=4)
-    self.fast_grnn = tf.keras.layers.RNN(FastGRNNCell(256, reuse=tf.compat.v1.AUTO_REUSE), return_sequences=True, return_state=True)
+    self.fast_grnn = tf.keras.layers.RNN(FastGRNNCell(128, reuse=tf.compat.v1.AUTO_REUSE), return_sequences=True, return_state=True)
     self.att = tf.keras.layers.Attention()
     self.dense = tf.keras.layers.Dense(target_words_count, activation='softmax')
 
@@ -228,9 +228,9 @@ class Seq2seq(tf.keras.Model):
       y = tf.convert_to_tensor(self.sos)
       y = tf.reshape(y, (1, 1))
 
-      seq = tf.TensorArray(tf.int32, 64)
+      seq = tf.TensorArray(tf.int32, 32)
 
-      for idx in tf.range(64):
+      for idx in tf.range(32):
         y, hidden = self.dec([y, H, hidden])
         y = tf.cast(tf.argmax(y, axis=-1), dtype=tf.int32)
         y = tf.reshape(y, (1, 1))
@@ -239,7 +239,7 @@ class Seq2seq(tf.keras.Model):
         if y == self.eos:
           break
 
-      return tf.reshape(seq.stack(), (1, 64))
+      return tf.reshape(seq.stack(), (1, 32))
 
 @tf.function
 def train_step(model, inputs, labels, loss_object, optimizer, train_loss, train_accuracy):
